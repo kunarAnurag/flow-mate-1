@@ -1,0 +1,8 @@
+{
+  "name": "FlowMate",
+  "description": "An AI-powered productivity companion that proactively assists in planning, prioritizing, and completing tasks before deadlines are missed.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

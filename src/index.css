@@ -1,0 +1,268 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Default dark mode is Navy + Amber */
+  --slate-50: #f4f7fb;
+  --slate-100: #e7eff7;
+  --slate-200: #d0def0;
+  --slate-300: #adc3e2;
+  --slate-400: #81a1cf;
+  --slate-500: #5e82ba;
+  --slate-600: #46679e;
+  --slate-700: #37507d;
+  --slate-800: #1d3557;  /* High-Contrast Corporate Navy Card Border */
+  --slate-850: #13243d;  /* Intermediate Deep Navy Border */
+  --slate-900: #0f1c30;  /* Professional Navy Card/Surface Background */
+  --slate-950: #070c16;  /* Immersive Deep Navy Page Background */
+
+  --indigo-50: #eef5ff;
+  --indigo-100: #d9e8fc;
+  --indigo-200: #bcd6f9;
+  --indigo-300: #8ebaf5;
+  --indigo-400: #5997f0;
+  --indigo-500: #3373e8;
+  --indigo-600: #1d4ed8;  /* High-Performance Decisive Royal Blue */
+  --indigo-700: #1e40af;
+  --indigo-800: #1e3a8a;
+  --indigo-900: #172554;
+  --indigo-950: #0f172a;
+
+  /* Accent: Amber */
+  --amber-100: #fef3c7;
+  --amber-200: #fde68a;
+  --amber-300: #fcd34d;
+  --amber-400: #fbbf24;
+  --amber-500: #f59e0b;
+  --amber-600: #d97706;
+  --amber-700: #b45309;
+  --amber-800: #92400e;
+  --amber-900: #78350f;
+  --amber-950: #451a03;
+
+  /* Red colors for Dark Mode */
+  --red-100: #fee2e2;
+  --red-200: #fecaca;
+  --red-300: #fca5a5;
+  --red-400: #f87171;
+  --red-500: #ef4444;
+  --red-600: #dc2626;
+  --red-700: #b91c1c;
+  --red-800: #991b1b;
+  --red-900: #7f1d1d;
+  --red-950: #450a0a;
+
+  /* Sky colors for Dark Mode */
+  --sky-100: #e0f2fe;
+  --sky-200: #bae6fd;
+  --sky-300: #7dd3fc;
+  --sky-400: #38bdf8;
+  --sky-500: #0ea5e9;
+  --sky-600: #0284c7;
+  --sky-700: #0369a1;
+  --sky-800: #075985;
+  --sky-900: #0c4a6e;
+  --sky-950: #082f49;
+
+  /* FlowArcIcon colors */
+  --flow-arc-stop1: #1d4ed8;
+  --flow-arc-stop2: #fbbf24;
+}
+
+:root.light {
+  /* Light mode: Warm off-white page background, pure white or ultra-soft surface cards, high-contrast text */
+  --slate-50: #0f172a;  /* Very dark slate for body text (highly readable) */
+  --slate-100: #020617; /* Deepest black-slate for titles */
+  --slate-200: #1e293b; /* Dark slate for prominent text */
+  --slate-300: #1e293b; /* Dark slate for text/subtext (making sure text-slate-300 is perfectly visible) */
+  --slate-400: #334155; /* Slate for labels and details */
+  --slate-500: #475569; /* Readable slate for minor info */
+  --slate-600: #64748b; /* Muted borders and icons */
+  --slate-700: #94a3b8; /* Accent hover state / borders */
+  --slate-800: #cbd5e1; /* Soft card/component borders */
+  --slate-850: #e2e8f0; /* Intermediate light borders */
+  --slate-900: #ffffff; /* Bright white card/surface backgrounds */
+  --slate-950: #e2e8f0; /* Perfect high-contrast premium slate-gray background (3 shades darker) */
+
+  /* Teal primary theme: Map bright colors to dark/legible ones when used as text */
+  --indigo-50: #f0fdfa;
+  --indigo-100: #ccfbf1;
+  --indigo-200: #115e59; /* Deep teal for high legibility */
+  --indigo-300: #0f766e; /* Deep teal for high legibility */
+  --indigo-400: #0f766e; /* Deep teal for high legibility */
+  --indigo-500: #0d9488;
+  --indigo-600: #0d9488; /* Energetic primary teal */
+  --indigo-700: #0d9488;
+  --indigo-800: #115e59;
+  --indigo-900: #134e4a;
+  --indigo-950: #ccfbf1; /* Soft clean light-teal container backgrounds for boxes/cards */
+
+  /* Accent: Replaced Yellow/Amber with an Ultra-Deep, High-Contrast Navy Blue for supreme legibility */
+  --amber-100: #eff6ff; /* Soft pastel navy-blue background */
+  --amber-200: #0b1a4a; /* Extremely dark Navy Blue for text-amber-200 (supreme readability!) */
+  --amber-300: #1e3a8a; /* Deep Royal Navy Blue for text-amber-300 headers */
+  --amber-400: #0f172a; /* Ultra dark Navy Blue */
+  --amber-500: #1d4ed8; /* Royal/Navy Blue for primary highlights */
+  --amber-600: #1e40af;
+  --amber-700: #1d4ed8;
+  --amber-800: #bfdbfe; /* Soft blue border */
+  --amber-900: #1e3a8a;
+  --amber-950: #eff6ff; /* Soft pastel navy-blue tint background */
+
+  /* Red colors for Light Mode: High-contrast rich red for text, soft pastel pink/red for background/borders */
+  --red-100: #fff5f5; /* Soft light red/pink background */
+  --red-200: #7f1d1d; /* Rich, highly readable dark red for warning text (text-red-200!) */
+  --red-300: #991b1b; /* Solid highly legible crimson red (text-red-300!) */
+  --red-400: #b91c1c; /* Legible red for warning text */
+  --red-500: #c53030; /* Crimson red */
+  --red-600: #e53e3e;
+  --red-700: #9b2c2c;
+  --red-800: #fca5a5; /* Soft red border */
+  --red-900: #fecaca; /* Soft red border */
+  --red-950: #fff5f5; /* Soft pastel pink/red tint background for warning cards */
+
+  /* Sky/Meeting colors for light mode: High-contrast rich blue-teal for text, soft pastel sky-blue for background */
+  --sky-100: #f0f9ff;
+  --sky-200: #0369a1; /* High contrast dark ocean blue */
+  --sky-300: #0c4a6e;
+  --sky-400: #075985; /* Extremely dark ocean blue for text-sky-400 (supreme readability!) */
+  --sky-500: #0ea5e9;
+  --sky-600: #0284c7;
+  --sky-700: #0369a1;
+  --sky-800: #bae6fd; /* Soft blue border */
+  --sky-900: #bae6fd; /* Soft blue border */
+  --sky-950: #f0f9ff; /* Soft pastel sky-blue tint background */
+
+  /* FlowArcIcon colors */
+  --flow-arc-stop1: #0d9488; /* Teal */
+  --flow-arc-stop2: #1e3a8a; /* Deep Navy Blue */
+}
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Map to customizable CSS Custom Properties */
+  --color-slate-50: var(--slate-50);
+  --color-slate-100: var(--slate-100);
+  --color-slate-200: var(--slate-200);
+  --color-slate-300: var(--slate-300);
+  --color-slate-400: var(--slate-400);
+  --color-slate-500: var(--slate-500);
+  --color-slate-600: var(--slate-600);
+  --color-slate-700: var(--slate-700);
+  --color-slate-800: var(--slate-800);
+  --color-slate-850: var(--slate-850);
+  --color-slate-900: var(--slate-900);
+  --color-slate-950: var(--slate-950);
+
+  --color-indigo-50: var(--indigo-50);
+  --color-indigo-100: var(--indigo-100);
+  --color-indigo-200: var(--indigo-200);
+  --color-indigo-300: var(--indigo-300);
+  --color-indigo-400: var(--indigo-400);
+  --color-indigo-500: var(--indigo-500);
+  --color-indigo-600: var(--indigo-600);
+  --color-indigo-700: var(--indigo-700);
+  --color-indigo-800: var(--indigo-800);
+  --color-indigo-900: var(--indigo-900);
+  --color-indigo-950: var(--indigo-950);
+
+  --color-amber-100: var(--amber-100);
+  --color-amber-200: var(--amber-200);
+  --color-amber-300: var(--amber-300);
+  --color-amber-400: var(--amber-400);
+  --color-amber-500: var(--amber-500);
+  --color-amber-600: var(--amber-600);
+  --color-amber-700: var(--amber-700);
+  --color-amber-800: var(--amber-800);
+  --color-amber-900: var(--amber-900);
+  --color-amber-950: var(--amber-950);
+
+  --color-red-100: var(--red-100);
+  --color-red-200: var(--red-200);
+  --color-red-300: var(--red-300);
+  --color-red-400: var(--red-400);
+  --color-red-500: var(--red-500);
+  --color-red-600: var(--red-600);
+  --color-red-700: var(--red-700);
+  --color-red-800: var(--red-800);
+  --color-red-900: var(--red-900);
+  --color-red-950: var(--red-950);
+
+  --color-sky-100: var(--sky-100);
+  --color-sky-200: var(--sky-200);
+  --color-sky-300: var(--sky-300);
+  --color-sky-400: var(--sky-400);
+  --color-sky-500: var(--sky-500);
+  --color-sky-600: var(--sky-600);
+  --color-sky-700: var(--sky-700);
+  --color-sky-800: var(--sky-800);
+  --color-sky-900: var(--sky-900);
+  --color-sky-950: var(--sky-950);
+}
+
+body {
+  background-color: var(--slate-950);
+  color: var(--slate-100);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom Light Mode UI Refinements */
+.light #edit-task-btn {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  padding-top: 0.375rem !important;
+  padding-bottom: 0.375rem !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.light #edit-task-btn:hover {
+  background-color: #1f2937 !important; /* Slate hover color */
+}
+
+/* Style the Cancel button when editing to be a clean visible button */
+.light #cancel-edit-btn {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  padding-top: 0.375rem !important;
+  padding-bottom: 0.375rem !important;
+  border-radius: 0.5rem !important;
+}
+
+.light #cancel-edit-btn:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* Sync to Google Calendar and Connect buttons visibility before hover */
+.light #sync-google-calendar-btn,
+.light #connect-calendar-drawer-btn,
+.light #connect-google-header-btn,
+.light #google-signin-btn {
+  background-color: #f1f5f9 !important; /* Soft light-slate background to contrast with white card */
+  color: #0b1a4a !important; /* High contrast ultra-deep Navy */
+  border: 1px solid #cbd5e1 !important; /* Clear visible border boundary */
+}
+
+.light #sync-google-calendar-btn:hover,
+.light #connect-calendar-drawer-btn:hover,
+.light #connect-google-header-btn:hover,
+.light #google-signin-btn:hover {
+  background-color: #e2e8f0 !important;
+  color: #030712 !important;
+}
+
+/* Ensure the calendar icon color is also fully high-contrast */
+.light #sync-google-calendar-btn svg {
+  color: #0b1a4a !important;
+}
+
+
