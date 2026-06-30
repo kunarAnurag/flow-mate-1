@@ -187,12 +187,17 @@ export function useAppState() {
           currentDate: new Date().toISOString()
         })
       });
-      const data = await res.json();
-      if (data.recommendations) {
-        saveRecommendations(data.recommendations);
+      const contentType = res.headers.get("content-type");
+      if (res.ok && contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        if (data.recommendations) {
+          saveRecommendations(data.recommendations);
+        }
+      } else {
+        console.warn(`[Recommendations] API returned non-JSON/error status: ${res.status}`);
       }
     } catch (e) {
-      console.error("AI recommendations generation failed:", e);
+      console.warn("AI recommendations generation failed gracefully:", e);
     } finally {
       setIsRecommendationLoading(false);
     }
@@ -230,30 +235,36 @@ export function useAppState() {
           currentDate: new Date().toISOString()
         })
       });
-      const analysis = await res.json();
       
-      const analyzedTask: Task = {
-        ...newTask,
-        priority: initialPriority || analysis.priority,
-        estimatedMinutes: analysis.recommendedDuration || 45,
-        aiAnalysis: {
-          urgencyScore: analysis.urgencyScore,
-          impactScore: analysis.impactScore,
-          riskOfMissing: analysis.riskOfMissing,
-          reasoning: analysis.reasoning,
-          suggestedStrategy: analysis.suggestedStrategy,
-          recommendedDuration: analysis.recommendedDuration || 45,
-          subtasks: analysis.subtasks || []
-        }
-      };
+      const contentType = res.headers.get("content-type");
+      if (res.ok && contentType && contentType.includes("application/json")) {
+        const analysis = await res.json();
+        
+        const analyzedTask: Task = {
+          ...newTask,
+          priority: initialPriority || analysis.priority,
+          estimatedMinutes: analysis.recommendedDuration || 45,
+          aiAnalysis: {
+            urgencyScore: analysis.urgencyScore,
+            impactScore: analysis.impactScore,
+            riskOfMissing: analysis.riskOfMissing,
+            reasoning: analysis.reasoning,
+            suggestedStrategy: analysis.suggestedStrategy,
+            recommendedDuration: analysis.recommendedDuration || 45,
+            subtasks: analysis.subtasks || []
+          }
+        };
 
-      const finalTasks = updated.map(t => t.id === newTask.id ? analyzedTask : t);
-      saveTasks(finalTasks);
-      
-      // Auto refresh recommendations with new state
-      triggerAIRecommendations(finalTasks, habits);
+        const finalTasks = updated.map(t => t.id === newTask.id ? analyzedTask : t);
+        saveTasks(finalTasks);
+        
+        // Auto refresh recommendations with new state
+        triggerAIRecommendations(finalTasks, habits);
+      } else {
+        console.warn(`[AnalyzeTask] API returned non-JSON/error status: ${res.status}`);
+      }
     } catch (e) {
-      console.error("AI analysis for task failed:", e);
+      console.warn("AI analysis for task failed gracefully:", e);
     }
   };
 
@@ -379,42 +390,48 @@ export function useAppState() {
           currentDate: new Date().toISOString()
         })
       });
-      const analysis = await res.json();
       
-      let finalTimeSlot = newTask.timeSlot;
-      if (analysis.recommendedDuration && analysis.recommendedDuration !== newTask.estimatedMinutes && finalTimeSlot) {
-        // Adjust endTime based on new duration
-        const [h, m] = finalTimeSlot.startTime.split(":").map(Number);
-        const totalMin = h * 60 + m + analysis.recommendedDuration;
-        const endH = Math.floor(totalMin / 60) % 24;
-        const endM = totalMin % 60;
-        finalTimeSlot = {
-          ...finalTimeSlot,
-          endTime: `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`
-        };
-      }
-
-      const analyzedTask: Task = {
-        ...newTask,
-        priority: analysis.priority,
-        estimatedMinutes: analysis.recommendedDuration || 45,
-        timeSlot: finalTimeSlot,
-        aiAnalysis: {
-          urgencyScore: analysis.urgencyScore,
-          impactScore: analysis.impactScore,
-          riskOfMissing: analysis.riskOfMissing,
-          reasoning: analysis.reasoning,
-          suggestedStrategy: analysis.suggestedStrategy,
-          recommendedDuration: analysis.recommendedDuration || 45,
-          subtasks: analysis.subtasks || []
+      const contentType = res.headers.get("content-type");
+      if (res.ok && contentType && contentType.includes("application/json")) {
+        const analysis = await res.json();
+        
+        let finalTimeSlot = newTask.timeSlot;
+        if (analysis.recommendedDuration && analysis.recommendedDuration !== newTask.estimatedMinutes && finalTimeSlot) {
+          // Adjust endTime based on new duration
+          const [h, m] = finalTimeSlot.startTime.split(":").map(Number);
+          const totalMin = h * 60 + m + analysis.recommendedDuration;
+          const endH = Math.floor(totalMin / 60) % 24;
+          const endM = totalMin % 60;
+          finalTimeSlot = {
+            ...finalTimeSlot,
+            endTime: `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`
+          };
         }
-      };
 
-      const finalTasks = updated.map(t => t.id === newTask.id ? analyzedTask : t);
-      saveTasks(finalTasks);
-      triggerAIRecommendations(finalTasks, habits);
+        const analyzedTask: Task = {
+          ...newTask,
+          priority: analysis.priority,
+          estimatedMinutes: analysis.recommendedDuration || 45,
+          timeSlot: finalTimeSlot,
+          aiAnalysis: {
+            urgencyScore: analysis.urgencyScore,
+            impactScore: analysis.impactScore,
+            riskOfMissing: analysis.riskOfMissing,
+            reasoning: analysis.reasoning,
+            suggestedStrategy: analysis.suggestedStrategy,
+            recommendedDuration: analysis.recommendedDuration || 45,
+            subtasks: analysis.subtasks || []
+          }
+        };
+
+        const finalTasks = updated.map(t => t.id === newTask.id ? analyzedTask : t);
+        saveTasks(finalTasks);
+        triggerAIRecommendations(finalTasks, habits);
+      } else {
+        console.warn(`[VoiceTaskAnalysis] API returned non-JSON/error status: ${res.status}`);
+      }
     } catch (e) {
-      console.error("AI voice-task analysis error", e);
+      console.warn("AI voice-task analysis error gracefully handled:", e);
     }
   };
 

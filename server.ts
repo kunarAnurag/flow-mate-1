@@ -69,36 +69,36 @@ async function generateJSON(prompt: string, systemInstruction?: string): Promise
     } catch (error: any) {
       lastError = error;
       const errorMsg = error.message || String(error);
-      console.warn(`Gemini API attempt ${attempt} failed with: ${errorMsg}`);
 
-      // Check if the error is a transient error (503 Service Unavailable or 429 Rate Limit)
+      // Check if the error is a quota/limit exhaustion
       const isQuotaExceeded = errorMsg.includes("exceeded your current quota") ||
                               errorMsg.includes("Quota exceeded") ||
                               errorMsg.includes("billing details") ||
                               errorMsg.includes("GenerateRequestsPerDayPerProjectPerModel") ||
-                              errorMsg.includes("free_tier_requests");
-
-      const isTransient = !isQuotaExceeded && (
-                          errorMsg.includes("503") ||
-                          errorMsg.includes("UNAVAILABLE") ||
-                          errorMsg.includes("429") ||
-                          errorMsg.includes("ResourceExhausted") ||
-                          errorMsg.includes("overloaded") ||
-                          errorMsg.includes("high demand") ||
-                          error.status === 503 ||
-                          error.status === 429
-      );
+                              errorMsg.includes("free_tier_requests") ||
+                              errorMsg.includes("RESOURCE_EXHAUSTED") ||
+                              error.status === 429;
 
       if (isQuotaExceeded) {
         geminiQuotaExceeded = true;
-        console.warn("Gemini API Quota is fully exhausted. Aborting retries and falling back immediately.");
+        console.info(`[Gemini] API Quota status: Exceeded (Attempt ${attempt}). Activating offline local smart engine.`);
         break;
       }
+
+      console.warn(`[Gemini] API attempt ${attempt} notice: ${errorMsg.slice(0, 150)}`);
+
+      // Check if the error is a transient error (503 Service Unavailable or other)
+      const isTransient = errorMsg.includes("503") ||
+                          errorMsg.includes("UNAVAILABLE") ||
+                          errorMsg.includes("ResourceExhausted") ||
+                          errorMsg.includes("overloaded") ||
+                          errorMsg.includes("high demand") ||
+                          error.status === 503;
 
       if (isTransient && attempt < maxRetries) {
         // Backoff with a bit of jitter
         const delay = attempt * 1200 + Math.random() * 400;
-        console.log(`Transient Gemini API error detected. Retrying attempt ${attempt + 1}/${maxRetries} in ${delay.toFixed(0)}ms...`);
+        console.log(`Transient Gemini API issue. Retrying attempt ${attempt + 1}/${maxRetries} in ${delay.toFixed(0)}ms...`);
         await new Promise((resolve) => setTimeout(resolve, delay));
       } else {
         // Break out of the loop for non-transient errors or if we hit the retry limit
@@ -208,7 +208,8 @@ app.post("/api/analyze-task", async (req, res) => {
     const result = await generateJSON(prompt, "You are an elite productivity executive assistant specialized in time blocking and anxiety-free deadline completion.");
     res.json(result);
   } catch (error: any) {
-    console.warn("Gemini analyze-task handled gracefully via fallback. Notice:", error.message);
+    const isQuota = (error.message || "").includes("exceeded your current quota") || (error.message || "").includes("RESOURCE_EXHAUSTED");
+    console.info(`[Gemini] analyze-task: falling back to local calculation. (Quota status: ${isQuota})`);
     
     // Intelligent fallback calculation
     const dueTime = deadline ? new Date(deadline).getTime() : Date.now() + 86400000 * 2;
@@ -359,7 +360,8 @@ app.post("/api/generate-recommendations", async (req, res) => {
     const result = await generateJSON(prompt, "You are a warm, direct, highly strategic performance coach focused on anxiety reduction and high-output priority targeting.");
     res.json(result);
   } catch (error: any) {
-    console.warn("Gemini generate-recommendations handled gracefully via fallback. Notice:", error.message);
+    const isQuota = (error.message || "").includes("exceeded your current quota") || (error.message || "").includes("RESOURCE_EXHAUSTED");
+    console.info(`[Gemini] generate-recommendations: falling back to local recommendations. (Quota status: ${isQuota})`);
 
     // Smart Local Recommendations Engine
     const recommendations: any[] = [];
@@ -693,13 +695,12 @@ app.post("/api/breakdown-task", async (req, res) => {
     });
   } catch (error: any) {
     const errorMsg = error.message || String(error);
-    console.warn("Gemini breakdown-task handled gracefully via fallback. Notice:", errorMsg);
-
     const isQuota = errorMsg.includes("429") || 
                     errorMsg.includes("RESOURCE_EXHAUSTED") || 
                     errorMsg.includes("quota") ||
                     errorMsg.includes("ResourceExhausted") ||
                     errorMsg.includes("exhausted");
+    console.info(`[Gemini] breakdown-task: falling back to local deconstruction templates. (Quota status: ${isQuota})`);
 
     res.json({
       subtasks: generateSmartFallback(title, description),
@@ -777,7 +778,8 @@ app.post("/api/voice-command", async (req, res) => {
     const result = await generateJSON(prompt, "You are a smart, rapid-responding productivity interface that converts casual speech inputs into structured database operations.");
     res.json(result);
   } catch (error: any) {
-    console.warn("Gemini voice-command handled gracefully via fallback. Notice:", error.message);
+    const isQuota = (error.message || "").includes("exceeded your current quota") || (error.message || "").includes("RESOURCE_EXHAUSTED");
+    console.info(`[Gemini] voice-command: falling back to local voice parsing engine. (Quota status: ${isQuota})`);
 
     // Natural text parsing fallback
     const lower = commandText.toLowerCase();

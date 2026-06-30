@@ -441,21 +441,23 @@ export default function VoiceAssistant({
         })
       });
 
-      const data = await res.json();
-      setLastSpeech(data.speechResponse);
-      speakText(data.speechResponse);
+      const contentType = res.headers.get("content-type");
+      if (res.ok && contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        setLastSpeech(data.speechResponse);
+        speakText(data.speechResponse);
 
-      // Append AI response to timeline
-      const assistantMsg: Message = {
-        id: Math.random().toString(),
-        sender: "assistant",
-        text: data.speechResponse,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-      };
-      setMessages(prev => [...prev, assistantMsg]);
+        // Append AI response to timeline
+        const assistantMsg: Message = {
+          id: Math.random().toString(),
+          sender: "assistant",
+          text: data.speechResponse,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        };
+        setMessages(prev => [...prev, assistantMsg]);
 
-      // Process parsed tasks or actions
-      if (data.parsedAction) {
+        // Process parsed tasks or actions
+        if (data.parsedAction) {
         const { type, payload } = data.parsedAction;
         
         // Helper to find task by search keyword
@@ -569,7 +571,21 @@ export default function VoiceAssistant({
           onNavigate(payload.view);
         }
       }
-    } catch (e) {
+    } else {
+      const fallbackMsg = "The voice engine is temporarily warming up. Let's manage your timeline locally instead! Try typing or adding tasks directly.";
+      setLastSpeech(fallbackMsg);
+      speakText(fallbackMsg);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: Math.random().toString(),
+          sender: "assistant",
+          text: fallbackMsg,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        }
+      ]);
+    }
+  } catch (e) {
       console.error(e);
       const errorMsg = "I ran into an issue connecting with my brain. Please try again.";
       setLastSpeech(errorMsg);

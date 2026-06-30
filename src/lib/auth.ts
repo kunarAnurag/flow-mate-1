@@ -9,8 +9,13 @@ import {
 } from "firebase/auth";
 import firebaseConfig from "../../firebase-applet-config.json";
 
-// Initialize Firebase App
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase App with dynamic API key from environment variable
+const finalFirebaseConfig = {
+  ...firebaseConfig,
+  apiKey: ((import.meta as any).env?.VITE_FIREBASE_API_KEY as string) || firebaseConfig.apiKey
+};
+
+const app = initializeApp(finalFirebaseConfig);
 export const auth = getAuth(app);
 
 // Google Auth Provider setup with required scopes

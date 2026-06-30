@@ -59,10 +59,15 @@ export default function App() {
   const checkQuotaStatus = async () => {
     try {
       const res = await fetch("/api/quota-status");
-      const data = await res.json();
-      setQuotaExceeded(data.quotaExceeded);
+      const contentType = res.headers.get("content-type");
+      if (res.ok && contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        setQuotaExceeded(data.quotaExceeded);
+      } else {
+        console.warn(`[QuotaCheck] Service is warming up or temporarily unavailable. Status: ${res.status}`);
+      }
     } catch (err) {
-      console.error("Failed to check quota status:", err);
+      console.warn("[QuotaCheck] Connection to server is warming up:", err);
     }
   };
 
