@@ -585,8 +585,8 @@ export default function App() {
 
       {/* Visual Footer */}
       <footer id="app-footer" className="bg-slate-900/30 border-t border-slate-850 py-6 text-center">
-        <p className="text-[11px] font-mono text-slate-500">
-          FlowMate Co-Pilot • Container Running on Port 3000 • Local Sandbox Sync Active
+        <p className="text-[11px] font-sans text-slate-500">
+          FlowMate : Your AI-powered productivity companion
         </p>
       </footer>
 
